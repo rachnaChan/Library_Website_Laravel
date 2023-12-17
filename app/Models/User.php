@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\resetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,6 +54,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+
     public function roleUser()
     {
         return $this->belongsTo(Role::class, 'role_id');
@@ -81,5 +84,9 @@ class User extends Authenticatable
         return $this->hasMany(Favorite_Book::class,'favorite_book_id')->with(['Books']);
     }
 
-
+    public function sendPasswordResetNotification($token)
+    {
+        $url = 'http://localhost:5173/newPassword?token=' . $token;
+        $this->notify(new resetPassword($url));
+    }
 }
