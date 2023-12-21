@@ -15,19 +15,19 @@ class CategoriesBookSeeder extends Seeder
     {
         Categories::create([
             'categories_name' => 'Operating System',
-            'user_categories' => '2',
+            'user_categories_id' => '2',
 
         ]);
 
         Categories::create([
             'categories_name' => 'Research Methodology',
-            'user_categories' => '2',
+            'user_categories_id' => '2',
 
         ]);
-        
+
         Categories::create([
             'categories_name' => 'Network Security',
-            'user_categories' => '2',
+            'user_categories_id' => '2',
 
         ]);
     }

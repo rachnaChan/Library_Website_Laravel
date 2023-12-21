@@ -58,6 +58,34 @@ class AuthenticationController extends Controller
         ]);
     }
 
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $fields['email'])->first();
+
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Wrong credentials'
+            ]);
+        }
+
+        $token = $user->createToken('my-token')->plainTextToken;
+
+        $role = Role::find($user->role_id);
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+            'Type' => 'Bearer',
+            'role' => $role->role_name
+        ]);
+    }
+
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -108,58 +136,59 @@ class AuthenticationController extends Controller
         }
     }
 
-   //request password reset through email
-   public function forgotPassword(Request $request){
-    $request->validate([
-        'email' => 'required|email',
-    ]);
+    //request password reset through email
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
 
-    // Laravel's built-in Password facade is used to send a reset link to the user's email
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
-    if($status == Password::RESET_LINK_SENT){
-        return [
-            'status' => __('A password reset link has been sent to your email.'),
-        ];
-    }
-    throw ValidationException::withMessages([
-        'email' => [trans($status)],
-    ]);
-}
-
-//reset the password
-public function resetPassword(Request $request){
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        //required password and confirmed password
-        'password' => ['required', 'confirmed', RulesPassword::defaults()],
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function($user) use ($request) {
-            $user->forceFill([
-                'password' => Hash::make($request->password),
-                'remember_token' => Str::random(60),
-            ])->save();
-
-             //to delete the old token
-            $user->tokens()->delete();
-            //laravel built in function
-            event(new PasswordReset($user));
-     }
-    );
-
-    if($status == Password::PASSWORD_RESET) {
-        return response([
-            'message'=> 'Password reset sucessfully'
+        // Laravel's built-in Password facade is used to send a reset link to the user's email
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+        if ($status == Password::RESET_LINK_SENT) {
+            return [
+                'status' => __('A password reset link has been sent to your email.'),
+            ];
+        }
+        throw ValidationException::withMessages([
+            'email' => [trans($status)],
         ]);
     }
-    return response([
-        'message'=> __($status)
-    ],500);
-}
 
+    //reset the password
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            //required password and confirmed password
+            'password' => ['required', 'confirmed', RulesPassword::defaults()],
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                //to delete the old token
+                $user->tokens()->delete();
+                //laravel built in function
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status == Password::PASSWORD_RESET) {
+            return response([
+                'message' => 'Password reset sucessfully'
+            ]);
+        }
+        return response([
+            'message' => __($status)
+        ], 500);
+    }
 }

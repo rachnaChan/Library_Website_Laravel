@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'dob' => '2002-01-01',
             'phone_number' => '000000',
             'bio' => 'wish to be an integral part of your life!!',
-            'role_id' => 1,
+            'role_id' => 3,
         ]);
         User::create([
             'username' => 'zaponh',
