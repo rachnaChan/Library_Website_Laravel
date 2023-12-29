@@ -6,13 +6,14 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UserSeeder extends Seeder
+class users extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+
         User::create([
             'username' => 'rachnac',
             'email' => 'rachnac@gmail.com',
@@ -23,7 +24,7 @@ class UserSeeder extends Seeder
             'dob' => '2002-01-01',
             'phone_number' => '000000',
             'bio' => 'wish to be an integral part of your life!!',
-            'role_id' => 3,
+            'role_id' => 1,
         ]);
         User::create([
             'username' => 'zaponh',
@@ -71,7 +72,7 @@ class UserSeeder extends Seeder
             'dob' => '2002-01-01',
             'phone_number' => '000000',
             'bio' => 'wish to be an integral part of your life!!',
-            'role_id' => 1,
+            'role_id' => 2,
         ]);
     }
 }

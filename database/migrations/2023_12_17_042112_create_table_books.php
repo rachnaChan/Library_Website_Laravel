@@ -21,11 +21,11 @@ return new class extends Migration
             $table->unsignedBigInteger('release_year');
             $table->text('description')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('categories_id');
             $table->unsignedBigInteger('user_id');
+            $table->enum('categories_type', ['GIC', 'AMS','GIM' ,'GCA', 'GEE', 'GTR', 'OAC', 'GGG'])->nullable();
+
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('categories_id')->references('id')->on('categories');
         });
     }
 
