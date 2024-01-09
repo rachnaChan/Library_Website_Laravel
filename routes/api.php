@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthenticationController;
+use App\Http\Controllers\API\BookController;
+use App\Http\Controllers\API\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,12 +29,29 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 //public route
 Route::post('/register', [AuthenticationController::class, 'register']);
 Route::post('/login', [AuthenticationController::class, 'login']);
+Route::get('/listallBook', [BookController::class, 'listBooks']);
+Route::get('/listarrivalBooks', [BookController::class, 'listArrivalBooks']);
+Route::get('/searchBook/{query}', [BookController::class, 'searchBook']);
+Route::get('/previewBook/uploads/{bookId}', [BookController::class, 'previewBook']);
+
 
 
 
 
 //private route that only "Admin" can access to
-Route::group(['middleware' => ['auth:sanctum', 'role:2']], function () {
+Route::group(['middleware' => ['auth:sanctum', 'role:1']], function () {
+    Route::post('/logout', [AuthenticationController::class, 'logout']);
+    Route::post('/admin/uploadBook', [BookController::class, 'uploadBook']);
+    Route::post('/admin/change_password', [AuthenticationController::class, 'changePassword']);
+    Route::get('/admin/listallBook', [BookController::class, 'listBooks']);
+    Route::post('/admin/updateBook/{id}', [BookController::class, 'updateBook']);
+    Route::delete('/admin/deleteBook/{id}', [BookController::class, 'deleteBook']);
+    Route::get('/admin/searchBook/{query}', [BookController::class, 'searchBook']);
+    Route::get('/admin/previewBook/uploads/{bookId}', [BookController::class, 'previewBook']);
+
+
+
+
 
 });
 
